@@ -5,7 +5,6 @@
 #define UNIT 5
 int n;
 
-/* Emergency structure */
 struct Emergency
 {
     int id;
@@ -18,7 +17,6 @@ struct Emergency
     int assigned[UNIT];
 };
 
-/* Unit structure */
 struct Unit
 {
     int id;
