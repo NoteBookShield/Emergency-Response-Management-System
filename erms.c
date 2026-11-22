@@ -136,5 +136,5 @@ int main()
 
     } while (choice != 4);
 
-    return 1;
+    return 0;
 }
