@@ -35,10 +35,109 @@ struct Unit u[UNIT] = {
     {105, "Disaster Team", 100}};
 int count = 0;
 int nextID = 101;
+char *getType(int type)
+{
+    switch (type)
+    {
+    case 1:
+        return "Medical";
+    case 2:
+        return "Fire";
+    case 3:
+        return "Accident";
+    case 4:
+        return "Crime";
+    case 5:
+        return "Disaster";
+    default:
+        return "Unknown";
+    }
+}
+char *getStatus(int status)
+{
+    switch (status)
+    {
+    case 1:
+        return "Pending";
+    case 2:
+        return "Assigned";
+    case 3:
+        return "On The Way";
+    case 4:
+        return "Completed";
+    case 5:
+        return "Cancelled";
+    default:
+        return "Unknown";
+    }
+}
+void saveData()
+{
+    FILE *fp;
 
+    fp = fopen("erms.dat", "wb");
+
+    if (fp == NULL)
+    {
+        printf("Unable to save data!\n");
+        return;
+    }
+
+    fwrite(&count, sizeof(int), 1, fp);
+
+    fwrite(e, sizeof(struct Emergency), count, fp);
+
+    fclose(fp);
+}
+void loadData()
+{
+    FILE *fp;
+    int i;
+
+    fp = fopen("erms.dat", "rb");
+
+    if (fp == NULL)
+    {
+        return;
+    }
+
+    if (fread(&count, sizeof(int), 1, fp) != 1)
+    {
+        count = 0;
+        fclose(fp);
+        return;
+    }
+
+    if (count < 0 || count > MAX)
+    {
+        count = 0;
+        fclose(fp);
+        return;
+    }
+
+    if (fread(e, sizeof(struct Emergency),
+              count, fp) != (size_t)count)
+    {
+        count = 0;
+        fclose(fp);
+        return;
+    }
+
+    fclose(fp);
+
+    nextID = 101;
+
+    for (i = 0; i < count; i++)
+    {
+        if (e[i].id >= nextID)
+        {
+            nextID = e[i].id + 1;
+        }
+    }
+}
 void reportEmergency()
 {
-    
+
     if (count >= MAX)
     {
         printf("Maximum emergency reports reached!\n");
@@ -71,17 +170,45 @@ void reportEmergency()
 
     printf("Enter Description: ");
     scanf(" %[^\n]", e[count].description);
-
-   
+    e[count].status = 1;
 
     printf("\nEmergency reported successfully!\n");
     printf("Your Emergency ID: %d\n", e[count].id);
 
     count++;
     nextID++;
+    saveData();
 }
+void publicReports()
+{
+    int i;
+
+    printf("\n========== PUBLIC EMERGENCY REPORTS ==========\n");
+
+    if (count == 0)
+    {
+        printf("No emergency reports available!\n");
+        return;
+    }
+
+    printf("%s \t%-25s %-10s %s\n",
+           "ID", "Location", "Type", "Status");
+
+    for (i = 0; i < count; i++)
+    {
+        printf("%d \t%-25.23s %-10s %s\n",
+               e[i].id,
+               e[i].location,
+               getType(e[i].type),
+               getStatus(e[i].status));
+    }
+
+    printf("\nTotal Reports: %d\n", count);
+}
+
 int main()
 {
+    loadData();
     int choice = 0;
     do
     {
@@ -118,9 +245,9 @@ int main()
             reportEmergency();
             break;
 
-            // case 2:
-            //     publicReports();
-            //     break;
+        case 2:
+            publicReports();
+            break;
 
             // case 3:
             //     adminLogin();
