@@ -92,7 +92,6 @@ void saveData()
 void loadData()
 {
     FILE *fp;
-    int i;
 
     fp = fopen("erms.dat", "rb");
 
@@ -127,7 +126,7 @@ void loadData()
 
     nextID = 101;
 
-    for (i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
         if (e[i].id >= nextID)
         {
@@ -181,7 +180,6 @@ void reportEmergency()
 }
 void publicReports()
 {
-    int i;
 
     printf("\n========== PUBLIC EMERGENCY REPORTS ==========\n");
 
@@ -194,7 +192,7 @@ void publicReports()
     printf("%s \t%-25s %-10s %s\n",
            "ID", "Location", "Type", "Status");
 
-    for (i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
         printf("%d \t%-25.23s %-10s %s\n",
                e[i].id,
